@@ -1,0 +1,6 @@
+APP_PORT: 9991
+DB_USER: root
+DB_HOST: localhost
+DB_PASSWORD: xxxxxxxx
+DB_NAME: db_order
+DB_PORT: 5432
