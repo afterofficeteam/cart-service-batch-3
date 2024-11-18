@@ -17,6 +17,7 @@ func NewSvc(repo cart.Repository) *svc {
 
 type Service interface {
 	Insert(req *cartProto.CartInsertRequest) (*cartProto.CartInsertResponse, error)
+	GetDetails(req *cartProto.CartDetailRequest) (*cartProto.CartDetailResponse, error)
 }
 
 func (s *svc) Insert(req *cartProto.CartInsertRequest) (*cartProto.CartInsertResponse, error) {
@@ -28,4 +29,8 @@ func (s *svc) Insert(req *cartProto.CartInsertRequest) (*cartProto.CartInsertRes
 	return &cartProto.CartInsertResponse{
 		Msg: *insertOK,
 	}, nil
+}
+
+func (s *svc) GetDetails(req *cartProto.CartDetailRequest) (*cartProto.CartDetailResponse, error) {
+	return s.repository.GetDetails(req)
 }

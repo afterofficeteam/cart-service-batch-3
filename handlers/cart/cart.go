@@ -20,3 +20,7 @@ func NewHandler(svc cartSvc.Service) *Handler {
 func (h *Handler) InsertCart(ctx context.Context, bReq *cart.CartInsertRequest) (*cart.CartInsertResponse, error) {
 	return h.svc.Insert(bReq)
 }
+
+func (h *Handler) DetailCart(ctx context.Context, bReq *cart.CartDetailRequest) (*cart.CartDetailResponse, error) {
+	return h.svc.GetDetails(bReq)
+}
