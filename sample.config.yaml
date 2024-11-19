@@ -1,4 +1,5 @@
-APP_PORT: 9991
+GRPC_PORT: 9991
+HTTP_PORT: 9992
 DB_USER: root
 DB_HOST: localhost
 DB_PASSWORD: xxxxxxxx
