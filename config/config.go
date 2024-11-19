@@ -2,12 +2,14 @@ package config
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	AppPort    string
+	GrpcPort   string
+	HttpPort   string
 	DBHost     string
 	DBPort     int
 	DBUser     string
@@ -28,7 +30,8 @@ func LoadConfig() (*Config, error) {
 	}
 
 	config := &Config{
-		AppPort:    viper.GetString("APP_PORT"),
+		GrpcPort:   viper.GetString("GRPC_PORT"),
+		HttpPort:   viper.GetString("HTTP_PORT"),
 		DBUser:     viper.GetString("DB_USER"),
 		DBHost:     viper.GetString("DB_HOST"),
 		DBPassword: viper.GetString("DB_PASSWORD"),
@@ -37,4 +40,12 @@ func LoadConfig() (*Config, error) {
 	}
 
 	return config, nil
+}
+
+func WriteTimeout() time.Duration {
+	return 10 * time.Second
+}
+
+func ReadTimeout() time.Duration {
+	return 10 * time.Second
 }

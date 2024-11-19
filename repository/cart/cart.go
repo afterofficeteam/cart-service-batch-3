@@ -4,6 +4,8 @@ import (
 	"cart-service/proto/cart"
 	"database/sql"
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
 type store struct {
@@ -17,6 +19,7 @@ func NewStore(db *sql.DB) *store {
 type Repository interface {
 	Insert(req *cart.CartInsertRequest) (*string, error)
 	GetDetails(req *cart.CartDetailRequest) (*cart.CartDetailResponse, error)
+	Delete(userID, productID uuid.UUID) (*int, error)
 }
 
 func (s *store) Insert(req *cart.CartInsertRequest) (*string, error) {
@@ -78,4 +81,41 @@ func (s *store) GetDetails(req *cart.CartDetailRequest) (*cart.CartDetailRespons
 	}
 
 	return &response, nil
+}
+
+func (s *store) Delete(userID, productID uuid.UUID) (*int, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	queryStatement := `
+		UPDATE cart_items 
+		SET
+			deleted_at = NOW() ,
+			updated_at = NOW()
+		WHERE
+			user_id = $1 AND product_id = $2
+	`
+
+	result, err := tx.Exec(queryStatement, userID, productID)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	rows := int(rowsAffected)
+	return &rows, nil
 }

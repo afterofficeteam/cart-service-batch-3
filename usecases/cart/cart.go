@@ -3,6 +3,8 @@ package cart
 import (
 	cartProto "cart-service/proto/cart"
 	"cart-service/repository/cart"
+
+	"github.com/google/uuid"
 )
 
 type svc struct {
@@ -18,6 +20,7 @@ func NewSvc(repo cart.Repository) *svc {
 type Service interface {
 	Insert(req *cartProto.CartInsertRequest) (*cartProto.CartInsertResponse, error)
 	GetDetails(req *cartProto.CartDetailRequest) (*cartProto.CartDetailResponse, error)
+	Delete(userID, productID uuid.UUID) (*int, error)
 }
 
 func (s *svc) Insert(req *cartProto.CartInsertRequest) (*cartProto.CartInsertResponse, error) {
@@ -33,4 +36,8 @@ func (s *svc) Insert(req *cartProto.CartInsertRequest) (*cartProto.CartInsertRes
 
 func (s *svc) GetDetails(req *cartProto.CartDetailRequest) (*cartProto.CartDetailResponse, error) {
 	return s.repository.GetDetails(req)
+}
+
+func (s *svc) Delete(userID, productID uuid.UUID) (*int, error) {
+	return s.repository.Delete(userID, productID)
 }
