@@ -3,6 +3,7 @@ package main
 import (
 	"cart-service/config"
 	"cart-service/repository/cart"
+	"cart-service/repository/order"
 	"cart-service/transport/procedures"
 	"cart-service/transport/routes"
 	"cart-service/util/middleware"
@@ -17,6 +18,10 @@ import (
 	cartHandler "cart-service/handlers/cart"
 	cartSvc "cart-service/usecases/cart"
 
+	orderHandler "cart-service/handlers/order"
+	orderSvc "cart-service/usecases/order"
+
+	"github.com/go-playground/validator/v10"
 	"google.golang.org/grpc"
 )
 
@@ -50,7 +55,9 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
-	procedures, routes := setupTransport(dbConn, grpcServer, listener)
+	validator := validator.New()
+
+	procedures, routes := setupTransport(dbConn, grpcServer, listener, validator)
 	go routes.Run(cfg.HttpPort, &wg)
 	go procedures.RunRpcServer(cfg.GrpcPort, &wg)
 
@@ -69,10 +76,14 @@ func main() {
 	log.Println("All servers stopped successfully")
 }
 
-func setupTransport(db *sql.DB, server *grpc.Server, listener net.Listener) (*procedures.Procedures, *routes.Routes) {
+func setupTransport(db *sql.DB, server *grpc.Server, listener net.Listener, validator *validator.Validate) (*procedures.Procedures, *routes.Routes) {
 	cartRepository := cart.NewStore(db)
 	cartSvc := cartSvc.NewSvc(cartRepository)
 	cartHandler := cartHandler.NewHandler(cartSvc)
+
+	orderRepository := order.NewStore(db)
+	orSvc := orderSvc.NewSvc(orderRepository)
+	orderHandler := orderHandler.NewHandler(orSvc, validator)
 
 	procedures := &procedures.Procedures{
 		Listen: listener,
@@ -81,7 +92,8 @@ func setupTransport(db *sql.DB, server *grpc.Server, listener net.Listener) (*pr
 	}
 
 	routes := &routes.Routes{
-		Cart: cartHandler,
+		Cart:  cartHandler,
+		Order: orderHandler,
 	}
 
 	return procedures, routes

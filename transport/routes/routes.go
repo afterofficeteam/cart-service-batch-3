@@ -11,6 +11,7 @@ import (
 	"time"
 
 	cart "cart-service/handlers/cart"
+	order "cart-service/handlers/order"
 
 	"github.com/spf13/viper"
 )
@@ -18,6 +19,7 @@ import (
 type Routes struct {
 	Router *http.ServeMux
 	Cart   *cart.Handler
+	Order  *order.Handler
 }
 
 func URLRewriter(baseURLPath string, next http.Handler) http.HandlerFunc {
@@ -31,10 +33,16 @@ func URLRewriter(baseURLPath string, next http.Handler) http.HandlerFunc {
 func (r *Routes) setupRouter() {
 	r.Router = http.NewServeMux()
 	r.cartRoutes()
+	r.orderRoutes()
 }
 
 func (r *Routes) cartRoutes() {
 	r.Router.HandleFunc("DELETE /cart/{user_id}/{product_id}", middleware.ApplyMiddleware(r.Cart.DeleteCart, middleware.EnabledCors, middleware.LoggerMiddleware()))
+}
+
+func (r *Routes) orderRoutes() {
+	r.Router.HandleFunc("POST /order", middleware.ApplyMiddleware(r.Order.CreateOrder, middleware.EnabledCors, middleware.LoggerMiddleware()))
+	r.Router.HandleFunc("PATCH /order/{order_id}", middleware.ApplyMiddleware(r.Order.UpdateOrder, middleware.EnabledCors, middleware.LoggerMiddleware()))
 }
 
 func (r *Routes) Run(port string, wg *sync.WaitGroup) {
