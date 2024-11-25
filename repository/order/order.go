@@ -33,7 +33,7 @@ func (o *store) CreateOrder(bReq model.Order) (*uuid.UUID, *string, error) {
 	queryCreate := `
 		INSERT INTO orders (
 			user_id,
-			-- payment_type_id,
+			payment_type_id,
 			order_number,
 			total_price,
 			product_order,
@@ -51,7 +51,7 @@ func (o *store) CreateOrder(bReq model.Order) (*uuid.UUID, *string, error) {
 	if err := tx.QueryRow(
 		queryCreate,
 		bReq.UserID,
-		// bReq.PaymentTypeID,
+		bReq.PaymentTypeID,
 		bReq.OrderNumber,
 		bReq.TotalPrice,
 		bReq.ProductOrder,

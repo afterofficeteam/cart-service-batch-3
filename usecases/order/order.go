@@ -25,6 +25,7 @@ type Service interface {
 func (s *svc) CreateOrder(bReq model.Order) (*uuid.UUID, error) {
 	orderID, refCode, err := s.repository.CreateOrder(bReq)
 	if err != nil {
+		println("error insert data")
 		return nil, err
 	}
 
@@ -36,6 +37,7 @@ func (s *svc) CreateOrder(bReq model.Order) (*uuid.UUID, error) {
 		Notes:      "Order created",
 	})
 	if err != nil {
+		println("error insert logs")
 		return nil, err
 	}
 
