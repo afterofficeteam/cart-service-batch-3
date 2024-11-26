@@ -42,7 +42,6 @@ func (r *Routes) cartRoutes() {
 
 func (r *Routes) orderRoutes() {
 	r.Router.HandleFunc("POST /order", middleware.ApplyMiddleware(r.Order.CreateOrder, middleware.EnabledCors, middleware.LoggerMiddleware()))
-	r.Router.HandleFunc("PATCH /order/{order_id}", middleware.ApplyMiddleware(r.Order.UpdateOrder, middleware.EnabledCors, middleware.LoggerMiddleware()))
 }
 
 func (r *Routes) Run(port string, wg *sync.WaitGroup) {

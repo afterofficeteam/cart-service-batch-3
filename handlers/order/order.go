@@ -51,4 +51,3 @@ func (h *Handler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 	helpers.HandleResponse(w, http.StatusCreated, bRes)
 }
-func (h *Handler) UpdateOrder(w http.ResponseWriter, r *http.Request) {}

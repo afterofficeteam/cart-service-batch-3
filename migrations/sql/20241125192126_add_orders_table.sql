@@ -3,7 +3,7 @@
 CREATE TABLE orders (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID NOT NULL,
-    -- payment_type_id UUID NOT NULL,
+    payment_type_id UUID NOT NULL,
     order_number VARCHAR(100) NOT NULL,
     total_price DOUBLE PRECISION NOT NULL,
     product_order JSONB, -- Added qty in product_order
