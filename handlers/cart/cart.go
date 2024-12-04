@@ -4,7 +4,9 @@ import (
 	"cart-service/proto/cart"
 	cartSvc "cart-service/usecases/cart"
 	"cart-service/util/helpers"
+	"cart-service/util/middleware"
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -33,6 +35,11 @@ func (h *Handler) DeleteCart(w http.ResponseWriter, r *http.Request) {
 	userID, err := uuid.Parse(r.PathValue("user_id"))
 	if err != nil {
 		helpers.HandleResponse(w, http.StatusBadRequest, "invalid user ID format")
+		return
+	}
+
+	if limiter := middleware.GetLimiter(fmt.Sprintf("%v", userID)); !limiter.Allow() {
+		helpers.HandleResponse(w, http.StatusTooManyRequests, "To many request, please try again later")
 		return
 	}
 

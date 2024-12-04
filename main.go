@@ -26,6 +26,8 @@ import (
 )
 
 func main() {
+	go middleware.CleanupOldLimiters()
+
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
